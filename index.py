@@ -1,4 +1,5 @@
 from flask import Flask, session, request
+from flask_cors import CORS, cross_origin
 import uuid
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -11,6 +12,8 @@ import threading
 import time
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = 'your-secret-key'
 client = MongoClient('mongodb+srv://python:python@newsomania.zzgeqwh.mongodb.net/?retryWrites=true&w=majority')
 db = client['NewsOMania']
@@ -72,7 +75,7 @@ def recommend_articles(watched_news_idx, page_num=1, page_size=20):
 
 
 @app.route('/recommend')
-def index():
+def recommend():
     if 'userId' not in session or user_collection.find_one({'userId' : session.get('userId')}) is None:
         session['userId'] = str(uuid.uuid4())
         print('New User, Session Created, ID: ' + session['userId'])
@@ -113,6 +116,64 @@ def add_watched_news(newsId):
         return 'Error: User not found'
 
     return f'News {newsId} watched by user {userId}'
+
+@app.route('/')
+@cross_origin()
+def index():
+    # Get page and pageSize parameters from the request
+    page = int(request.args.get('page', 1))
+    pageSize = int(request.args.get('pageSize', 20))
+    country = request.args.get('country', None)
+    category = request.args.get('category', None)
+
+    # Create query based on country and category parameters
+    query = {}
+    if country:
+        query['country'] = country
+    if category:
+        query['category'] = category
+
+    # Get total count of articles matching the query
+    total_results = news_collection.count_documents(query)
+
+    # Calculate total number of pages
+    num_pages = (total_results + pageSize - 1) // pageSize
+
+    # Check if page number is valid
+    if page < 1 or page > num_pages:
+        return {'status': 'error', 'message': 'Invalid page number'}
+
+    # Calculate starting and ending index for articles to return
+    start_idx = (page - 1) * pageSize
+    end_idx = start_idx + pageSize
+
+    # Query for articles matching the query and limit by page size and starting index
+    articles_cursor = news_collection.find(query).skip(start_idx).limit(pageSize)
+    articles = [article for article in articles_cursor]
+
+    # Convert articles to JSON format
+    json_articles = []
+    for article in articles:
+        json_article = {
+            'id': str(article['_id']),
+            'source': article['source'],
+            'author': article['author'],
+            'title': article['title'],
+            'description': article['description'],
+            'url': article['url'],
+            'urlToImage': article['urlToImage'],
+            'publishedAt': article['publishedAt'],
+            'content': article['content'],
+            'category': article['category'],
+            'country': article['country']
+        }
+        json_articles.append(json_article)
+
+    # Create response dictionary
+    response = {'status': 'ok', 'totalResults': total_results, 'articles': json_articles};
+
+    return response
+
 
 if __name__ == '__main__':
     app.run(debug=True)
