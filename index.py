@@ -7,6 +7,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import threading
+import time
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key'
@@ -15,6 +17,36 @@ db = client['NewsOMania']
 user_collection = db['users']
 news_collection = db['news']
 
+
+def update_news_list():
+    while True:
+        print("Updated")
+        global news_list, ids, item_similarities
+        news_cursor = news_collection.find()
+        news_list = list(news_cursor)
+        descriptions = [article['description'] for article in news_list]
+        ids = [str(article['_id']) for article in news_list]
+
+        # Perform content-based filtering
+        vectorizer = TfidfVectorizer(stop_words='english')
+        tfidf_matrix = vectorizer.fit_transform(descriptions)
+        item_similarities = cosine_similarity(tfidf_matrix)
+
+        time.sleep(10)
+
+update_thread = threading.Thread(target=update_news_list)
+update_thread.start()
+
+def recommend_news(watched_news_idx):
+    item_scores = item_similarities[watched_news_idx,:].sum(axis=0)
+    recommendations = item_scores.argsort()[::-1]
+    print(len(recommendations))
+    response = ""
+    for i, index in enumerate(recommendations):
+        article = news_list[index]
+        response += f"{i + 1}. {article['category']}, {article['title']}\n"
+
+    return response
 
 @app.route('/')
 def index():
@@ -27,35 +59,20 @@ def index():
 
     userId = session['userId']
     user = user_collection.find_one({'userId': userId})
-    news_cursor = news_collection.find()
-    news_list = list(news_cursor)
-    descriptions = [article['description'] for article in news_list]
-    ids = [str(article['_id']) for article in news_list]
 
-    vectorizer = TfidfVectorizer(stop_words='english')
-    tfidf_matrix = vectorizer.fit_transform(descriptions)
-    item_similarities = cosine_similarity(tfidf_matrix)
     if 'newsIds' in user:
         watched_news = user['newsIds']
         watched_news_idx = [ids.index(str(item)) for item in watched_news if str(item) in ids]
-    else :
+    else:
         watched_news_idx = []
-    
 
-    item_scores = item_similarities[watched_news_idx,:].sum(axis=0)
-    recommendations = item_scores.argsort()[::-1][:30]
-
-    response = ""
-    for i, index in enumerate(recommendations):
-        print(i)
-        article = news_collection.find_one({'_id': ObjectId(str(ids[index]))})
-        response += f"{i + 1}. {article['category']}, {article['title']}\n"
+    response = recommend_news(watched_news_idx)
 
     return response
 
 
-@app.route('/watched/<newsId>', methods=['GET'])
-def add_watched_news(newsId) :
+@app.route('/watch/<newsId>', methods=['GET'])
+def add_watched_news(newsId):
     if 'userId' not in session or user_collection.find_one({'userId' : session.get('userId')}) is None:
         session['userId'] = str(uuid.uuid4())
         print('New User, Session Created, ID: ' + session['userId'])
