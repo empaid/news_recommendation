@@ -5,10 +5,14 @@ client = MongoClient('mongodb+srv://python:python@newsomania.zzgeqwh.mongodb.net
 db = client['NewsOMania']
 collection = db['news']
 
-with open('news_data.csv', 'r', encoding='utf-8') as file:
+with open('news_data_2.csv', 'r', encoding='utf-8') as file:
     reader = csv.DictReader(file)
-    cnt = 0
     for i, row in enumerate(reader):
-        print(f"Inserted: {i} rows")
-        collection.insert_one(row)
-        cnt+=1
+        # Check if the article already exists in the collection
+        article = collection.find_one({'title': row['title'], 'description': row['description']})
+        if article is None:
+            collection.insert_one(row)
+            print(f"Inserted: {i} rows")
+        else:
+            print(f"Skipping duplicate article with title '{row['title']}' and description '{row['description']}'")
+        
