@@ -1,4 +1,5 @@
-from flask import Flask, session, request
+from flask import Flask, session, request, redirect
+from flask_session import Session
 from flask_cors import CORS, cross_origin
 import uuid
 from pymongo import MongoClient
@@ -11,10 +12,13 @@ from bson.objectid import ObjectId
 import threading
 import time
 
+
 app = Flask(__name__)
-cors = CORS(app)
+app.config["SESSION_TYPE"] = "filesystem"
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = 'your-secret-key'
+Session(app)
+CORS(app, supports_credentials=True, origins=["http://127.0.0.1:3000"], allow_headers=["Content-Type"])
 client = MongoClient('mongodb+srv://python:python@newsomania.zzgeqwh.mongodb.net/?retryWrites=true&w=majority')
 db = client['NewsOMania']
 user_collection = db['users']
@@ -74,16 +78,9 @@ def recommend_articles(watched_news_idx, page_num=1, page_size=20):
     return articles, total_results
 
 
-@app.route('/recommend')
-def recommend():
-    if 'userId' not in session or user_collection.find_one({'userId' : session.get('userId')}) is None:
-        session['userId'] = str(uuid.uuid4())
-        print('New User, Session Created, ID: ' + session['userId'])
-        user_collection.insert_one({'userId': session['userId'], "newsIds": []})
-    else:
-        print('Previous User, Session Restored, ID: ' + session['userId'])
-
-    userId = session['userId']
+# @app.route('/recommend')
+def recommend(userId, page=1, pageSize=20):
+    # userId = session['userId']
     user = user_collection.find_one({'userId': userId})
 
     if 'newsIds' in user:
@@ -91,10 +88,6 @@ def recommend():
         watched_news_idx = [ids.index(str(item)) for item in watched_news if str(item) in ids]
     else:
         watched_news_idx = []
-
-    # Get page and pageSize parameters from the request
-    page = int(request.args.get('page', 1))
-    pageSize = int(request.args.get('pageSize', 20))
 
     articles, total_results = recommend_articles(watched_news_idx, page, pageSize)
     response = { "status": "ok", "totalResults": total_results, "articles": articles}
@@ -118,14 +111,23 @@ def add_watched_news(newsId):
     return f'News {newsId} watched by user {userId}'
 
 @app.route('/')
-@cross_origin()
+@cross_origin(supports_credentials=True)
 def index():
+    if 'userId' not in session or user_collection.find_one({'userId' : session.get('userId')}) is None:
+        session['userId'] = str(uuid.uuid4())
+        print('New User, Session Created, ID: ' + session['userId'])
+        user_collection.insert_one({'userId': session['userId'], "newsIds": []})
+    else:
+        print('Previous User, Session Restored, ID: ' + session['userId'])
+
     # Get page and pageSize parameters from the request
     page = int(request.args.get('page', 1))
     pageSize = int(request.args.get('pageSize', 20))
     country = request.args.get('country', None)
     category = request.args.get('category', None)
 
+    if(category == 'recommend'):
+        return recommend(session['userId'], page=page, pageSize=pageSize)
     # Create query based on country and category parameters
     query = {}
     if country:
@@ -141,7 +143,7 @@ def index():
 
     # Check if page number is valid
     if page < 1 or page > num_pages:
-        return {'status': 'error', 'message': 'Invalid page number'}
+        return {'status': 'ok', 'totalResults': total_results, 'articles': []}
 
     # Calculate starting and ending index for articles to return
     start_idx = (page - 1) * pageSize
@@ -170,8 +172,10 @@ def index():
         json_articles.append(json_article)
 
     # Create response dictionary
-    response = {'status': 'ok', 'totalResults': total_results, 'articles': json_articles};
-
+    response = {'status': 'ok', 'totalResults': total_results, 'articles': json_articles}
+    # response['headers'] = {}
+    # response.headers.add('Access-Control-Allow-Origin', '*')
+    # response.headers.add('Access-Control-Allow-Credentials', 'true')
     return response
 
 
