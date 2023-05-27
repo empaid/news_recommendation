@@ -12,7 +12,7 @@ const News = (props) => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
-  const baseUrl = "http://localhost:5000/";
+  const baseUrl = process.env.REACT_APP_BACKEND_ENDPOINT;
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
