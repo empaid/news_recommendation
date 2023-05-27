@@ -18,6 +18,6 @@ RUN npm run build
 
 EXPOSE 3000
 
-WORKDIR /work_dir/
+WORKDIR /work_dir/frontend/
 RUN chmod a+x run.sh
 CMD ["./run.sh"]

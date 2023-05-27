@@ -1,4 +1,4 @@
 #!/bin/bash
 
-exec python3 /path/to/script1.py &
+exec python3 ../backend/index.py &
 exec npm start
