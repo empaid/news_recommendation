@@ -4,3 +4,4 @@ uuid
 pymongo
 numpy
 scikit-learn
+flask_cors
