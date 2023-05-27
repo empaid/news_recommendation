@@ -6,10 +6,10 @@ ENV NODE_ENV=production
 
 WORKDIR /work_dir
 
-RUN npm install
-
 COPY . .
 WORKDIR /work_dir/frontend/
+
+RUN npm install
 RUN npm run build
 
 EXPOSE 8080
