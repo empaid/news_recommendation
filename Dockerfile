@@ -3,7 +3,7 @@
 FROM node:16
 
 ENV NODE_ENV=production
-
+RUN apt-get update || : && apt-get install python -y
 WORKDIR /work_dir
 
 COPY . .
