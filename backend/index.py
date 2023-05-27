@@ -18,7 +18,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = 'your-secret-key'
 Session(app)
-CORS(app, supports_credentials=True, origins=["http://127.0.0.1:3000"], allow_headers=["Content-Type"])
+CORS(app, supports_credentials=True, origins=["*"], allow_headers=["Content-Type"])
 client = MongoClient('mongodb+srv://python:python@newsomania.zzgeqwh.mongodb.net/?retryWrites=true&w=majority')
 db = client['NewsOMania']
 user_collection = db['users']
