@@ -9,7 +9,7 @@ WORKDIR /work_dir
 COPY . .
 
 WORKDIR /work_dir/backend/
-RUN pip3 install -r requirements.txt
+RUN pip install -r requirements.txt
 
 WORKDIR /work_dir/frontend/
 
