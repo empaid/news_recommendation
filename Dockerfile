@@ -1,17 +1,16 @@
 #Sample Dockerfile for NodeJS Apps
 
-FROM node:16
+FROM python:3.8
 
 ENV NODE_ENV=production
 WORKDIR /work_dir
 
 COPY . .
 
-WORKDIR /work_dir/frontend/
+WORKDIR /work_dir/backend/
 
-RUN npm install
-RUN npm run build
+RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 3000
+EXPOSE 5000
 
-CMD ["npm", "start"]
+CMD ["python", "index.py"]
