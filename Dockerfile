@@ -6,11 +6,10 @@ ENV NODE_ENV=production
 
 WORKDIR /work_dir
 
-COPY ["package.json", "package-lock.json*", "./"]
-
 RUN npm install
 
 COPY . .
+WORKDIR /work_dir/frontend/
 RUN npm run build
 
 EXPOSE 8080
