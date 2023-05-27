@@ -1,2 +1,3 @@
-node_modules/
-flask_session/
+backend/node_modules/
+backend/flask_session/
+frontend/node_modules/
