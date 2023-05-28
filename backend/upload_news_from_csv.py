@@ -5,7 +5,7 @@ client = MongoClient('mongodb+srv://python:python@newsomania.zzgeqwh.mongodb.net
 db = client['NewsOMania']
 collection = db['news']
 
-with open('news_data_2.csv', 'r', encoding='utf-8') as file:
+with open('news_data_3.csv', 'r', encoding='utf-8') as file:
     reader = csv.DictReader(file)
     for i, row in enumerate(reader):
         # Check if the article already exists in the collection
