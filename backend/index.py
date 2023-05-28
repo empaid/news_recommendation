@@ -39,12 +39,10 @@ def update_news_list():
         vectorizer = TfidfVectorizer(stop_words='english')
         tfidf_matrix = vectorizer.fit_transform(descriptions)
         item_similarities = cosine_similarity(tfidf_matrix)
-        break
         time.sleep(10)
 
-# update_thread = threading.Thread(target=update_news_list)
-# update_thread.start()
-update_news_list()
+update_thread = threading.Thread(target=update_news_list)
+update_thread.start()
 
 def recommend_articles(watched_news_idx, page_num=1, page_size=20):
     item_scores = item_similarities[watched_news_idx,:].sum(axis=0)
