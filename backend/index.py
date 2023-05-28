@@ -11,6 +11,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 import threading
 import time
+import json
 
 
 app = Flask(__name__)
@@ -38,11 +39,12 @@ def update_news_list():
         vectorizer = TfidfVectorizer(stop_words='english')
         tfidf_matrix = vectorizer.fit_transform(descriptions)
         item_similarities = cosine_similarity(tfidf_matrix)
-
+        break
         time.sleep(10)
 
-update_thread = threading.Thread(target=update_news_list)
-update_thread.start()
+# update_thread = threading.Thread(target=update_news_list)
+# update_thread.start()
+update_news_list()
 
 def recommend_articles(watched_news_idx, page_num=1, page_size=20):
     item_scores = item_similarities[watched_news_idx,:].sum(axis=0)
@@ -62,7 +64,7 @@ def recommend_articles(watched_news_idx, page_num=1, page_size=20):
         article = news_list[index]
         json_article = {
             'id': str(article['_id']),
-            'source': article['source'],
+            'source': json.loads(article['source'].replace('\'', '"').replace("None", "null")),
             'author': article['author'],
             'title': article['title'],
             'description': article['description'],
@@ -150,7 +152,24 @@ def index():
     end_idx = start_idx + pageSize
 
     # Query for articles matching the query and limit by page size and starting index
-    articles_cursor = news_collection.find(query).skip(start_idx).limit(pageSize)
+    articles_cursor = news_collection.aggregate([ {"$match": query}, {"$project": {
+      "publishedAt": {
+         "$dateFromString": {
+            "dateString": '$publishedAt'
+         }
+      },
+      'source': "$source",
+      'author': 'author',
+    'title': '$title',
+    'description': '$description',
+    'url': '$url',
+    'urlToImage': '$urlToImage',
+    'publishedAt': '$publishedAt',
+    'content': '$content',
+    'category': '$category',
+    'country': '$country'
+   }
+}, { "$sort": { "publishedAt" : -1} }, {"$skip": start_idx}, {"$limit": pageSize} ])
     articles = [article for article in articles_cursor]
 
     # Convert articles to JSON format
@@ -158,7 +177,7 @@ def index():
     for article in articles:
         json_article = {
             'id': str(article['_id']),
-            'source': article['source'],
+            'source': json.loads(article['source'].replace('\'', '"').replace("None", "null")),
             'author': article['author'],
             'title': article['title'],
             'description': article['description'],
