@@ -4,7 +4,7 @@ import "./NewsItem.css";
 const NewsItem = (props) => {
   let { id, title, description, imageUrl, newsUrl, author, date, source } = props;
   const handleAnchorClick = event => {
-    fetch('http://localhost:5000/watch/' + id, {credentials: 'include'}).then((response) =>{console.log(response)});
+    fetch(process.env.REACT_APP_BACKEND_ENDPOINT + 'watch/' + id, {credentials: 'include'}).then((response) =>{console.log(response)});
   };
   return (
     <div className="my-3">
