@@ -2,11 +2,7 @@ pipeline {
     agent any
     
     stages {
-        stage('Fetch Code') {
-            steps {
-                git 'https://github.com/empaid/news_recommendation.git'
-            }
-        }
+        
         stage('Code Analysis') {
             environment {
                 scannerHome = tool 'Sonar'
