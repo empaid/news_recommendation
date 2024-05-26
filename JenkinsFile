@@ -5,7 +5,7 @@ pipeline {
         
         stage('Code Analysis') {
             environment {
-                scannerHome = tool 'Sonar'
+                scannerHome = tool 'SonarQube Scanner'
             }
             steps {
                 script {
@@ -14,7 +14,7 @@ pipeline {
                             -Dsonar.projectKey=NewOMania \
                             -Dsonar.projectName=NewOMania \
                             -Dsonar.projectVersion=1.0 \
-                            -Dsonar.sources=.>"
+                            -Dsonar.sources=."
                     }
                 }
             }
