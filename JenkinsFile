@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Fetch Code') {
+            steps {
+                git 'https://github.com/empaid/news_recommendation.git'
+            }
+        }
+        stage('Code Analysis') {
+            environment {
+                scannerHome = tool 'Sonar'
+            }
+            steps {
+                script {
+                    withSonarQubeEnv('SonarQube Scanner') {
+                        sh "${scannerHome}/bin/sonar-scanner \
+                            -Dsonar.projectKey=NewOMania \
+                            -Dsonar.projectName=NewOMania \
+                            -Dsonar.projectVersion=1.0 \
+                            -Dsonar.sources=.>"
+                    }
+                }
+            }
+        }
+    }
+}

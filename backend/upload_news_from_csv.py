@@ -1,7 +1,7 @@
 import csv
 from pymongo import MongoClient
 
-client = MongoClient('mongodb+srv://python:python@newsomania.zzgeqwh.mongodb.net/?retryWrites=true&w=majority')
+client = MongoClient('mongodb+srv://admin:admin@newsomania.ejz4mic.mongodb.net/?retryWrites=true&w=majority&appName=NewsOMania')
 db = client['NewsOMania']
 collection = db['news']
 

@@ -7,7 +7,7 @@ from bson.objectid import ObjectId
 import pandas as pd
 
 # Connect to MongoDB
-client = MongoClient('mongodb+srv://python:python@newsomania.zzgeqwh.mongodb.net/?retryWrites=true&w=majority')
+client = MongoClient('mongodb+srv://admin:admin@newsomania.ejz4mic.mongodb.net/?retryWrites=true&w=majority&appName=NewsOMania')
 db = client['NewsOMania']
 news_collection = db['news']
 user_collection = db['users']

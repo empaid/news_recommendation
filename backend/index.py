@@ -20,7 +20,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = 'your-secret-key'
 Session(app)
 CORS(app, supports_credentials=True, origins=["*"], allow_headers=["Content-Type"])
-client = MongoClient('mongodb+srv://python:python@newsomania.zzgeqwh.mongodb.net/?retryWrites=true&w=majority')
+client = MongoClient('mongodb+srv://admin:admin@newsomania.ejz4mic.mongodb.net/?retryWrites=true&w=majority&appName=NewsOMania')
 db = client['NewsOMania']
 user_collection = db['users']
 news_collection = db['news']
@@ -28,7 +28,7 @@ news_collection = db['news']
 
 def update_news_list():
     while True:
-        print("Updated")
+        # print("Updated")
         global news_list, ids, item_similarities
         news_cursor = news_collection.find()
         news_list = list(news_cursor)
@@ -39,7 +39,7 @@ def update_news_list():
         vectorizer = TfidfVectorizer(stop_words='english')
         tfidf_matrix = vectorizer.fit_transform(descriptions)
         item_similarities = cosine_similarity(tfidf_matrix)
-        time.sleep(10)
+        time.sleep(100)
 
 update_thread = threading.Thread(target=update_news_list)
 update_thread.start()
@@ -100,7 +100,7 @@ def add_watched_news(newsId):
     if 'userId' not in session or user_collection.find_one({'userId' : session.get('userId')}) is None:
         session['userId'] = str(uuid.uuid4())
         print('New User, Session Created, ID: ' + session['userId'])
-        user_collection.insert_one({'userId': userId, "newsIds": []})
+        user_collection.insert_one({'userId': session['userId'], "newsIds": []})
 
     userId = session['userId']
     result = user_collection.update_one({'userId': userId}, {'$push': {'newsIds': newsId}})
@@ -197,4 +197,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
