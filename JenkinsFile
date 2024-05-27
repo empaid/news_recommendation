@@ -6,7 +6,7 @@ pipeline {
         stage('Code Analysis') {
             steps {
                 script {
-                    sh 'docker-compose up'
+                    sh 'sudo docker-compose up'
                 }
             }
         }
