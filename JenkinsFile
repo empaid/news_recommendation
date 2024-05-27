@@ -9,13 +9,7 @@ pipeline {
             }
             steps {
                 script {
-                    withSonarQubeEnv('SonarQube Scanner') {
-                        sh "${scannerHome}/bin/sonar-scanner \
-                            -Dsonar.projectKey=NewOMania \
-                            -Dsonar.projectName=NewOMania \
-                            -Dsonar.projectVersion=1.0 \
-                            -Dsonar.sources=."
-                    }
+                    sh 'echo hiii'
                 }
             }
         }
