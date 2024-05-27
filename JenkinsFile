@@ -4,9 +4,6 @@ pipeline {
     stages {
         
         stage('Code Analysis') {
-            environment {
-                scannerHome = tool 'SonarQube Scanner';
-            }
             steps {
                 script {
                     sh 'echo hiii'
