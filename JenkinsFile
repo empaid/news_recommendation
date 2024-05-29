@@ -4,8 +4,11 @@ pipeline {
     stages {
         
         stage('Code Analysis') {
+             
             steps {
                 script {
+                    sh "touch .env"
+                    sh 'echo "IP=$SERVER_IP">>.env'
                     sh "docker rm -v -f \$(docker ps -qa)"
                     sh "sudo chown root:jenkins /run/docker.sock"
                     sh 'sudo docker compose up'
