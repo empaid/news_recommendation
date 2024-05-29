@@ -4,7 +4,9 @@ pipeline {
     stages {
         
         stage('Code Analysis') {
-             
+             options {
+                timeout(time: 1, unit: 'MINUTES')
+            }
             steps {
                 script {
                     sh "touch .env"
@@ -12,6 +14,7 @@ pipeline {
                     sh "if [ \$(docker ps -qa)  ]; then docker rm -v -f \$(docker ps -qa); fi;"
                     sh "sudo chown root:jenkins /run/docker.sock"
                     sh 'nohup sudo docker compose up &'
+                    sleep 300
                 }
             }
         }
