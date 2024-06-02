@@ -1,0 +1,1 @@
+if [ \$(docker ps -qa)  ]; then docker rm -v -f \$(docker ps -qa); fi;
