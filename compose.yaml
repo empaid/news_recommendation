@@ -1,3 +1,4 @@
+name: newomania
 services:
   backend:
     build: ./backend/.
