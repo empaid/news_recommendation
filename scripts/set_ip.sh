@@ -1,0 +1,1 @@
+export IP=$(echo curl http://checkip.amazonaws.com)

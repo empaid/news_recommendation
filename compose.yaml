@@ -9,4 +9,4 @@ services:
     ports:
       - "80:3000"
     environment:
-      - REACT_APP_BACKEND_ENDPOINT=http://3444:4000/
+      - REACT_APP_BACKEND_ENDPOINT=http://${IP}:4000/
