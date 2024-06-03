@@ -17,7 +17,7 @@ pipeline {
               } 
             }
           }
-        }
+        },
         stage('Test'){
           steps{
             dir("backend") {
