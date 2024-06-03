@@ -40,10 +40,12 @@ pipeline {
                     sh "if [ \$(docker ps -qa)  ]; then docker rm -v -f \$(docker ps -qa); fi;"
                     sh "sudo chown root:jenkins /run/docker.sock"
                     sh 'nohup sudo docker compose up &'
+                    sleep 120
+                    sh "python3 test_staging.py"
                 }
             }
         }
-        stage('codedeploy'){
+        stage('Release'){
           steps {
             step([$class: 'AWSCodeDeployPublisher', applicationName: 'newsomania', deploymentGroupAppspec: false, deploymentGroupName: 'newomaniaDeploymentgroup', excludes: '', iamRoleArn: '', includes: '**', proxyHost: '', proxyPort: 0, region: 'ap-southeast-2', s3bucket: 'newsomania-deployment', s3prefix: '', subdirectory: '', versionFileName: '', waitForCompletion: true])
            }
