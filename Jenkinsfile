@@ -54,9 +54,8 @@ pipeline {
           steps {
             script {
               sh 'chmod 400 "news-mania.pem"'
-              sh 'ssh -i "news-mania.pem" ec2-user@ec2-13-211-98-55.ap-southeast-2.compute.amazonaws.com'
-              sh 'DD_API_KEY=e6c159b1b2240bd4854400c2fcd18603 DD_SITE="us5.datadoghq.com"  bash -c "$(curl -L https://s3.amazonaws.com/dd-agent/scripts/install_script_agent7.sh)"'
-            }
+              sh ''' ssh -i "news-mania.pem" ec2-user@ec2-13-211-98-55.ap-southeast-2.compute.amazonaws.com -t 'DD_API_KEY=e6c159b1b2240bd4854400c2fcd18603 DD_SITE="us5.datadoghq.com"  bash -c "$(curl -L https://s3.amazonaws.com/dd-agent/scripts/install_script_agent7.sh)"' '''
+             }
            }
         }
         
