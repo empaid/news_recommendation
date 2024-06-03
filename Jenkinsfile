@@ -58,6 +58,23 @@ pipeline {
              }
            }
         }
+
+        post {
+                success {
+                    emailext attachLog: true,
+                    to: "hardikpurohit26@gmail.com",
+                    subject: "Security scan stage is successfull.",
+                    body: "Please find the attached results of the scan"
+                }
+                failure {
+                    emailext attachLog: true,
+                    to: "hardikpurohit26@gmail.com",
+                    subject: "Security stage is unsuccessfull.",
+                    body: "Please find the attached log of the scan."
+                }
+                
+                }
+        }
         
     }
 }
