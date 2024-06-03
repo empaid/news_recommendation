@@ -5,7 +5,7 @@ pipeline {
         stage('Test'){
           steps{
             dir("backend") {
-                sh "python main_test.py";
+                sh "python3 main_test.py";
             }
           }
         }
