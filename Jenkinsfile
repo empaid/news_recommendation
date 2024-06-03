@@ -2,6 +2,13 @@ pipeline {
     agent any
     
     stages {
+        stage('Build'){
+          steps {
+            dir("backend") {
+                sh "pip3 install -r requirements.txt";
+            } 
+          }
+        }
         stage('Test'){
           steps{
             dir("backend") {
