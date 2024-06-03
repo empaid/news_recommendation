@@ -28,9 +28,8 @@ pipeline {
 
                 sh "nohup npm start &";
                 sleep 3
-                dir("test_run"){
-                  sh "python3 tests.js"
-                }
+                  sh "python3 tests.py"
+                
                 
             }}
           }
