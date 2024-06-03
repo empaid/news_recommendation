@@ -26,7 +26,7 @@ pipeline {
             nodejs(nodeJSInstallationName: 'nodejs'){
             dir("frontend") {
 
-                sh "npm start";
+                sh "nohup npm start &";
                 sleep 3
                 dir("test_run"){
                   sh "python3 tests.js"
