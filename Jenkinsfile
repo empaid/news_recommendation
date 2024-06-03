@@ -7,13 +7,15 @@ pipeline {
             dir("backend") {
                 sh "pip3 install -r requirements.txt";
             } 
-            dir("frontend") {
-                sh "npm install";
-                sh "npm run build";
-                dir("test_run"){
-                  sh "npm install"
-                }
-            } 
+            nodejs(nodeJSInstallationName: 'nodejs'){
+              dir("frontend") {
+                  sh "npm install";
+                  sh "npm run build";
+                  dir("test_run"){
+                    sh "npm install"
+                  }
+              } 
+            }
           }
         }
         stage('Test'){
