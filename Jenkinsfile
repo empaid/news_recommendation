@@ -9,6 +9,7 @@ pipeline {
             } 
             dir("frontend") {
                 sh "npm install";
+                sh "npm run build";
                 dir("test_run"){
                   sh "npm install"
                 }
@@ -22,8 +23,12 @@ pipeline {
             }
             dir("frontend") {
 
-                sh "npm run build";
+                sh "npm start";
                 sleep 3
+                dir("test_run"){
+                  sh "python3 tests.js"
+                }
+                
             }
           }
         }

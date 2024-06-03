@@ -5,3 +5,4 @@ pymongo
 numpy
 scikit-learn
 flask_cors
+selenium
