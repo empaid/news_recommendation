@@ -1,14 +1,18 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 import unittest
-
+chrome_options = Options()
+chrome_options.add_argument('--headless')  # Run in headless mode
+chrome_options.add_argument('--no-sandbox')  # Bypass OS security model
+chrome_options.add_argument('--disable-dev-shm-usage')
 class ReactAppTestCase(unittest.TestCase):
     base_url = 'http://localhost:3000/React'
 
     @classmethod
     def setUpClass(cls):
         # Setup Chrome WebDriver
-        cls.driver = webdriver.Chrome()
+        cls.driver = webdriver.Chrome(options=chrome_options)
         cls.driver.implicitly_wait(10)
         cls.driver.get(cls.base_url)
 
