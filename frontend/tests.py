@@ -29,7 +29,7 @@ class ReactAppTestCase(unittest.TestCase):
     def test_business_page_reachable(self):
         # Verify the business page is reachable
         self.driver.get(f'{self.base_url}/business')
-        self.assertTrue("Businessss" in self.driver.page_source)
+        self.assertTrue("Business" in self.driver.page_source)
 
     def test_entertainment_page_reachable(self):
         # Verify the entertainment page is reachable
