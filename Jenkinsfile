@@ -23,6 +23,7 @@ pipeline {
             dir("backend") {
                 sh "python3 main_test.py";
             }
+            nodejs(nodeJSInstallationName: 'nodejs'){
             dir("frontend") {
 
                 sh "npm start";
@@ -31,7 +32,7 @@ pipeline {
                   sh "python3 tests.js"
                 }
                 
-            }
+            }}
           }
         }
         // stage('codedeploy'){
