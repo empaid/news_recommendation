@@ -6,3 +6,4 @@ numpy
 scikit-learn
 flask_cors
 selenium
+urllib3<2.0
