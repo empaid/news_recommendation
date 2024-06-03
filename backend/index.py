@@ -40,9 +40,9 @@ def update_news_list():
         tfidf_matrix = vectorizer.fit_transform(descriptions)
         item_similarities = cosine_similarity(tfidf_matrix)
         time.sleep(100)
-
-update_thread = threading.Thread(target=update_news_list)
-update_thread.start()
+if __name__ == '__main__':
+    update_thread = threading.Thread(target=update_news_list)
+    update_thread.start()
 
 def recommend_articles(watched_news_idx, page_num=1, page_size=20):
     item_scores = item_similarities[watched_news_idx,:].sum(axis=0)
@@ -99,7 +99,7 @@ def recommend(userId, page=1, pageSize=20):
 def add_watched_news(newsId):
     if 'userId' not in session or user_collection.find_one({'userId' : session.get('userId')}) is None:
         session['userId'] = str(uuid.uuid4())
-        print('New User, Session Created, ID: ' + session['userId'])
+        # print('New User, Session Created, ID: ' + session['userId'])
         user_collection.insert_one({'userId': session['userId'], "newsIds": []})
 
     userId = session['userId']
@@ -115,10 +115,11 @@ def add_watched_news(newsId):
 def index():
     if 'userId' not in session or user_collection.find_one({'userId' : session.get('userId')}) is None:
         session['userId'] = str(uuid.uuid4())
-        print('New User, Session Created, ID: ' + session['userId'])
+        # print('New User, Session Created, ID: ' + session['userId'])
         user_collection.insert_one({'userId': session['userId'], "newsIds": []})
     else:
-        print('Previous User, Session Restored, ID: ' + session['userId'])
+        pass
+        # print('Previous User, Session Restored, ID: ' + session['userId'])
 
     # Get page and pageSize parameters from the request
     page = int(request.args.get('page', 1))

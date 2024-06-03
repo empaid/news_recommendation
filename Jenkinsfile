@@ -2,11 +2,18 @@ pipeline {
     agent any
     
     stages {
-        stage('codedeploy'){
-          steps {
-            step([$class: 'AWSCodeDeployPublisher', applicationName: 'newsomania', deploymentGroupAppspec: false, deploymentGroupName: 'newomaniaDeploymentgroup', excludes: '', iamRoleArn: '', includes: '**', proxyHost: '', proxyPort: 0, region: 'ap-southeast-2', s3bucket: 'newsomania-deployment', s3prefix: '', subdirectory: '', versionFileName: '', waitForCompletion: true])
-           }
+        stage('Test'){
+          steps{
+            dir("backend") {
+                sh "python main_test.py";
+            }
+          }
         }
+        // stage('codedeploy'){
+        //   steps {
+        //     step([$class: 'AWSCodeDeployPublisher', applicationName: 'newsomania', deploymentGroupAppspec: false, deploymentGroupName: 'newomaniaDeploymentgroup', excludes: '', iamRoleArn: '', includes: '**', proxyHost: '', proxyPort: 0, region: 'ap-southeast-2', s3bucket: 'newsomania-deployment', s3prefix: '', subdirectory: '', versionFileName: '', waitForCompletion: true])
+        //    }
+        // }
         // stage('Code Analysis') {
         //      options {
         //         timeout(time: 1, unit: 'MINUTES')
