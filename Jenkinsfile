@@ -17,7 +17,7 @@ pipeline {
               } 
             }
           }
-        },
+        }
         stage('Test'){
           steps{
             dir("backend") {
@@ -31,7 +31,7 @@ pipeline {
                   sh "python3 tests.py"
             }}
           }
-        },
+        }
         stage('Deploy') {
             steps {
                 script {
