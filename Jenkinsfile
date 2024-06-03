@@ -7,12 +7,23 @@ pipeline {
             dir("backend") {
                 sh "pip3 install -r requirements.txt";
             } 
+            dir("frontend") {
+                sh "npm install";
+                dir("test_run"){
+                  sh "npm install"
+                }
+            } 
           }
         }
         stage('Test'){
           steps{
             dir("backend") {
                 sh "python3 main_test.py";
+            }
+            dir("frontend") {
+
+                sh "npm run build";
+                sleep 3
             }
           }
         }
